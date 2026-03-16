@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EncryptApp - Register</title>
+    <link rel="stylesheet" href="/Styles/main.css">
+    <link rel="stylesheet" href="/Styles/auth.css">
+</head>
+<body class="auth-page">
+    <div class="auth-card">
+        <div class="auth-logo">&#128274;</div>
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Set up your secure messaging account</p>
+
+        <div id="alert" class="alert hidden"></div>
+
+        <form id="registerForm" class="auth-form">
+            <div class="form-group">
+                <label class="form-label" for="username">Username</label>
+                <input type="text" id="username" class="form-input" placeholder="Choose a username" required autocomplete="username" maxlength="50">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" class="form-input" placeholder="Choose a password (min 6 characters)" required minlength="6" autocomplete="new-password">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm your password" required autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn btn-primary" id="registerBtn">Create Account</button>
+        </form>
+
+        <div id="progress" class="auth-progress">
+            Generating encryption keys...
+        </div>
+
+        <div class="auth-footer">
+            Already have an account? <a href="/Views/login.html">Sign in</a>
+        </div>
+    </div>
+
+    <script src="/Scripts/shared/utils.js"></script>
+    <script src="/Scripts/shared/api.js"></script>
+    <script src="/Scripts/app/keystore.js"></script>
+    <script src="/Scripts/app/crypto.js"></script>
+    <script src="/Scripts/app/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Auth.initRegister();
+        });
+    </script>
+</body>
+</html>

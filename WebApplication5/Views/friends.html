@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EncryptApp - Friends</title>
+    <link rel="stylesheet" href="/Styles/main.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="/Views/dashboard.html" class="nav-brand">EncryptApp</a>
+        <ul class="nav-links">
+            <li><a href="/Views/chat.html">Chat</a></li>
+            <li><a href="/Views/friends.html" class="active">Friends</a></li>
+            <li><a href="/Views/search.html">Find Users</a></li>
+            <li><a href="/Views/profile.html">Profile</a></li>
+        </ul>
+        <div class="nav-user">
+            <span class="nav-username" id="navUsername"></span>
+            <button class="btn btn-secondary btn-sm" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Pending Requests -->
+        <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">Friend Requests <span id="requestCount" class="badge hidden">0</span></div>
+            <div id="requestsList">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Friends List -->
+        <div class="card">
+            <div class="card-header">My Friends</div>
+            <div id="friendsList">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/Scripts/shared/utils.js"></script>
+    <script src="/Scripts/shared/api.js"></script>
+    <script src="/Scripts/app/auth.js"></script>
+    <script src="/Scripts/app/friends.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Friends.init();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EncryptApp - Find Users</title>
+    <link rel="stylesheet" href="/Styles/main.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="/Views/dashboard.html" class="nav-brand">EncryptApp</a>
+        <ul class="nav-links">
+            <li><a href="/Views/chat.html">Chat</a></li>
+            <li><a href="/Views/friends.html">Friends</a></li>
+            <li><a href="/Views/search.html" class="active">Find Users</a></li>
+            <li><a href="/Views/profile.html">Profile</a></li>
+        </ul>
+        <div class="nav-user">
+            <span class="nav-username" id="navUsername"></span>
+            <button class="btn btn-secondary btn-sm" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">Find Users</div>
+            <div class="card-body">
+                <div class="form-group">
+                    <input type="text" id="searchInput" class="form-input" placeholder="Search by username..." autocomplete="off">
+                </div>
+                <div id="searchResults">
+                    <div class="empty-state"><p>Type a username to search</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/Scripts/shared/utils.js"></script>
+    <script src="/Scripts/shared/api.js"></script>
+    <script src="/Scripts/app/auth.js"></script>
+    <script src="/Scripts/app/search.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Search.init();
+        });
+    </script>
+</body>
+</html>

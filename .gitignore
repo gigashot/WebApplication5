@@ -1,0 +1,29 @@
+# Build output
+WebApplication5/bin/
+WebApplication5/obj/
+
+# NuGet packages — restore via nuget.exe restore WebApplication5.sln
+packages/
+
+# nuget.exe CLI binary (not part of source)
+nuget.exe
+
+# EF migration tool config (machine-specific connection override)
+packages/EntityFramework.6.5.1/tools/net45/any/ef6.exe.config
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IIS Express
+.iisexpress/
+
+# Roslyn compiler cache
+WebApplication5/App_Data/
+
+# OS
+.DS_Store
+Thumbs.db

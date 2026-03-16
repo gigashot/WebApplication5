@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EncryptApp - Chat</title>
+    <link rel="stylesheet" href="/Styles/main.css">
+    <link rel="stylesheet" href="/Styles/chat.css">
+</head>
+<body>
+    <nav class="nav">
+        <a href="/Views/dashboard.html" class="nav-brand">EncryptApp</a>
+        <ul class="nav-links">
+            <li><a href="/Views/chat.html" class="active">Chat</a></li>
+            <li><a href="/Views/friends.html">Friends</a></li>
+            <li><a href="/Views/search.html">Find Users</a></li>
+            <li><a href="/Views/profile.html">Profile</a></li>
+        </ul>
+        <div class="nav-user">
+            <span class="nav-username" id="navUsername"></span>
+            <button class="btn btn-secondary btn-sm" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
+
+    <div class="chat-layout">
+        <!-- Sidebar: Friends List -->
+        <div class="chat-sidebar">
+            <div class="chat-sidebar-header">Conversations</div>
+            <div class="chat-sidebar-list" id="friendsList">
+                <div class="loading">Loading friends...</div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main" id="chatMain">
+            <!-- Empty state (no friend selected) -->
+            <div class="chat-empty" id="chatEmpty">
+                <div>
+                    <div style="font-size: 64px; margin-bottom: 12px;">&#128172;</div>
+                    <h3>Select a conversation</h3>
+                    <p>Choose a friend from the sidebar to start chatting</p>
+                </div>
+            </div>
+
+            <!-- Active chat (hidden until friend selected) -->
+            <div id="chatActive" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
+                <div class="chat-header">
+                    <div class="chat-friend-avatar" id="chatAvatar"></div>
+                    <div>
+                        <div class="chat-header-name" id="chatHeaderName"></div>
+                        <div class="chat-header-status" id="chatHeaderStatus">Offline</div>
+                    </div>
+                    <div class="chat-typing" id="chatTyping"></div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-load-more hidden" id="loadMore">
+                        <button id="loadMoreBtn">Load older messages</button>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <textarea class="chat-input" id="messageInput" placeholder="Type a message..." rows="1"></textarea>
+                    <button class="chat-send-btn" id="sendBtn" title="Send">&#10148;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/Scripts/lib/jquery-3.7.1.min.js"></script>
+    <script src="/Scripts/lib/jquery.signalR-2.4.3.min.js"></script>
+    <script src="/signalr/hubs"></script>
+    <script src="/Scripts/shared/utils.js"></script>
+    <script src="/Scripts/shared/api.js"></script>
+    <script src="/Scripts/app/keystore.js"></script>
+    <script src="/Scripts/app/crypto.js"></script>
+    <script src="/Scripts/app/signalr-client.js"></script>
+    <script src="/Scripts/app/auth.js"></script>
+    <script src="/Scripts/app/chat.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Chat.init();
+        });
+    </script>
+</body>
+</html>
