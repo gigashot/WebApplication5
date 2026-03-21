@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
@@ -18,16 +19,15 @@ namespace WebApplication5.Hubs
         private static readonly ConcurrentDictionary<int, string> OnlineUsers
             = new ConcurrentDictionary<int, string>();
 
-        public void Register(int userId)
+        public async Task Register(int userId)
         {
             var connectionId = Context.ConnectionId;
             OnlineUsers[userId] = connectionId;
 
-            // Persist to database
             using (var db = new EncryptAppDbContext())
             {
                 // Remove any stale connections for this user
-                var stale = db.Connections.Where(c => c.UserId == userId).ToList();
+                var stale = await db.Connections.Where(c => c.UserId == userId).ToListAsync();
                 db.Connections.RemoveRange(stale);
 
                 db.Connections.Add(new Connection
@@ -36,11 +36,11 @@ namespace WebApplication5.Hubs
                     UserId = userId,
                     ConnectedAt = DateTime.UtcNow
                 });
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
                 // Notify friends that this user is online
                 var friendRepo = new FriendRepository(db);
-                var friends = friendRepo.GetFriends(userId).Result;
+                var friends = await friendRepo.GetFriends(userId);
                 foreach (var friend in friends)
                 {
                     string friendConnId;
@@ -51,10 +51,10 @@ namespace WebApplication5.Hubs
                 }
 
                 // Deliver undelivered messages
-                var undelivered = db.Messages
+                var undelivered = await db.Messages
                     .Where(m => m.ReceiverId == userId && !m.Delivered)
                     .OrderBy(m => m.SentAt)
-                    .ToList();
+                    .ToListAsync();
 
                 foreach (var msg in undelivered)
                 {
@@ -71,11 +71,11 @@ namespace WebApplication5.Hubs
 
                     msg.Delivered = true;
                 }
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
         }
 
-        public void SendMessage(int toUserId, string encryptedPayload)
+        public async Task SendMessage(int toUserId, string encryptedPayload)
         {
             int fromUserId = GetCallerUserId();
             if (fromUserId == 0) return;
@@ -84,7 +84,7 @@ namespace WebApplication5.Hubs
             {
                 // Validate friendship
                 var friendRepo = new FriendRepository(db);
-                if (!friendRepo.AreFriends(fromUserId, toUserId).Result)
+                if (!await friendRepo.AreFriends(fromUserId, toUserId))
                 {
                     Clients.Caller.error("You are not friends with this user.");
                     return;
@@ -101,7 +101,7 @@ namespace WebApplication5.Hubs
                     Read = false
                 };
                 db.Messages.Add(message);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
                 var dto = new MessageDto
                 {
@@ -125,7 +125,7 @@ namespace WebApplication5.Hubs
                     Clients.Client(recipientConnId).receiveMessage(dto);
 
                     message.Delivered = true;
-                    db.SaveChanges();
+                    await db.SaveChangesAsync();
 
                     // Notify sender of delivery
                     Clients.Caller.messageDelivered(message.MessageId);
@@ -145,18 +145,18 @@ namespace WebApplication5.Hubs
             }
         }
 
-        public void MarkMessageDelivered(long messageId)
+        public async Task MarkMessageDelivered(long messageId)
         {
             int userId = GetCallerUserId();
             if (userId == 0) return;
 
             using (var db = new EncryptAppDbContext())
             {
-                var message = db.Messages.Find(messageId);
+                var message = await db.Messages.FindAsync(messageId);
                 if (message == null || message.ReceiverId != userId) return;
 
                 message.Delivered = true;
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
                 string senderConnId;
                 if (OnlineUsers.TryGetValue(message.SenderId, out senderConnId))
@@ -166,19 +166,19 @@ namespace WebApplication5.Hubs
             }
         }
 
-        public void MarkMessageRead(long messageId)
+        public async Task MarkMessageRead(long messageId)
         {
             int userId = GetCallerUserId();
             if (userId == 0) return;
 
             using (var db = new EncryptAppDbContext())
             {
-                var message = db.Messages.Find(messageId);
+                var message = await db.Messages.FindAsync(messageId);
                 if (message == null || message.ReceiverId != userId) return;
 
                 message.Delivered = true;
                 message.Read = true;
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
                 string senderConnId;
                 if (OnlineUsers.TryGetValue(message.SenderId, out senderConnId))
@@ -190,32 +190,28 @@ namespace WebApplication5.Hubs
 
         public override Task OnConnected()
         {
-            // userId will be set via Register() call from client
             return base.OnConnected();
         }
 
-        public override Task OnDisconnected(bool stopCalled)
+        public override async Task OnDisconnected(bool stopCalled)
         {
-            // Find which user this connection belongs to
             var userId = OnlineUsers.FirstOrDefault(kv => kv.Value == Context.ConnectionId).Key;
             if (userId != 0)
             {
                 string removed;
                 OnlineUsers.TryRemove(userId, out removed);
 
-                // Remove from DB
                 using (var db = new EncryptAppDbContext())
                 {
-                    var conn = db.Connections.Find(Context.ConnectionId);
+                    var conn = await db.Connections.FindAsync(Context.ConnectionId);
                     if (conn != null)
                     {
                         db.Connections.Remove(conn);
-                        db.SaveChanges();
+                        await db.SaveChangesAsync();
                     }
 
-                    // Notify friends
                     var friendRepo = new FriendRepository(db);
-                    var friends = friendRepo.GetFriends(userId).Result;
+                    var friends = await friendRepo.GetFriends(userId);
                     foreach (var friend in friends)
                     {
                         string friendConnId;
@@ -227,12 +223,11 @@ namespace WebApplication5.Hubs
                 }
             }
 
-            return base.OnDisconnected(stopCalled);
+            await base.OnDisconnected(stopCalled);
         }
 
         public override Task OnReconnected()
         {
-            // Re-register if needed
             var userId = OnlineUsers.FirstOrDefault(kv => kv.Value == Context.ConnectionId).Key;
             if (userId != 0)
             {
@@ -241,14 +236,12 @@ namespace WebApplication5.Hubs
             return base.OnReconnected();
         }
 
-        // Helper to get caller userId from the in-memory map
         private int GetCallerUserId()
         {
             var entry = OnlineUsers.FirstOrDefault(kv => kv.Value == Context.ConnectionId);
             return entry.Key;
         }
 
-        // Static helper for external access (e.g., from controllers)
         public static string GetConnectionId(int userId)
         {
             string connId;
