@@ -78,11 +78,11 @@ var SignalRClient = (function () {
         });
     }
 
-    function sendMessage(toUserId, encryptedPayload) {
+    function sendMessage(toUserId, encryptedForRecipient, encryptedForSender) {
         if (!hub || !connected) {
             return $.Deferred().reject('Not connected').promise();
         }
-        return hub.server.sendMessage(toUserId, encryptedPayload);
+        return hub.server.sendMessage(toUserId, encryptedForRecipient, encryptedForSender);
     }
 
     function sendTyping(toUserId) {

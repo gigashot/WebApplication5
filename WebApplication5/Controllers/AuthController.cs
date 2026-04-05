@@ -34,7 +34,7 @@ namespace WebApplication5.Controllers
 
             var result = await _authService.Login(dto);
             if (!result.Success)
-                return Content(System.Net.HttpStatusCode.Unauthorized, result);
+                return Ok(result);
 
             var session = HttpContext.Current.Session;
             session["UserId"] = result.Data.UserId;

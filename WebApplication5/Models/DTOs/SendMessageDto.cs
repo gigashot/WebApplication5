@@ -9,5 +9,7 @@ namespace WebApplication5.Models.DTOs
 
         [Required]
         public string EncryptedContent { get; set; }
+
+        public string SenderEncryptedContent { get; set; }
     }
 }

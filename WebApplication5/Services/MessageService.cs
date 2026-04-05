@@ -40,6 +40,7 @@ namespace WebApplication5.Services
                 SenderId = senderId,
                 ReceiverId = dto.ReceiverId,
                 EncryptedContent = dto.EncryptedContent,
+                SenderEncryptedContent = dto.SenderEncryptedContent,
                 SentAt = DateTime.UtcNow,
                 Delivered = false,
                 Read = false
@@ -71,7 +72,10 @@ namespace WebApplication5.Services
                 MessageId = m.MessageId,
                 SenderId = m.SenderId,
                 ReceiverId = m.ReceiverId,
-                EncryptedContent = m.EncryptedContent,
+                // Return the copy encrypted for the requesting user
+                EncryptedContent = m.SenderId == userId
+                    ? (m.SenderEncryptedContent ?? m.EncryptedContent)
+                    : m.EncryptedContent,
                 SentAt = m.SentAt,
                 Delivered = m.Delivered,
                 Read = m.Read

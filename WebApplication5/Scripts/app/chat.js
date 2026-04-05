@@ -332,23 +332,29 @@ var Chat = (function () {
         input.value = '';
         input.style.height = 'auto';
 
-        // Encrypt and send
-        Crypto.encryptMessage(text, activeFriend.publicKey)
-            .then(function (encrypted) {
+        // Encrypt for recipient AND sender (so sender can read their own messages later)
+        Promise.all([
+            Crypto.encryptMessage(text, activeFriend.publicKey),
+            Crypto.encryptMessage(text, currentUser.publicKey)
+        ])
+            .then(function (results) {
+                var encryptedForRecipient = results[0];
+                var encryptedForSender = results[1];
+
                 // Show message locally immediately
                 var tempMsg = {
                     messageId: 'temp_' + Date.now(),
                     senderId: currentUser.userId,
                     receiverId: activeFriendId,
-                    encryptedContent: encrypted,
+                    encryptedContent: encryptedForSender,
                     sentAt: new Date().toISOString(),
                     delivered: false,
                     read: false
                 };
                 appendMessage(text, tempMsg, true);
 
-                // Send via SignalR
-                return SignalRClient.sendMessage(activeFriendId, encrypted);
+                // Send both encrypted copies via SignalR
+                return SignalRClient.sendMessage(activeFriendId, encryptedForRecipient, encryptedForSender);
             })
             .catch(function (err) {
                 Utils.showToast('Failed to send message: ' + err, 'error');

@@ -18,6 +18,8 @@ namespace WebApplication5.Models.Entities
         [Required]
         public string EncryptedContent { get; set; }
 
+        public string SenderEncryptedContent { get; set; }
+
         public DateTime SentAt { get; set; }
 
         public bool Delivered { get; set; }

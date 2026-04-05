@@ -75,7 +75,7 @@ namespace WebApplication5.Hubs
             }
         }
 
-        public async Task SendMessage(int toUserId, string encryptedPayload)
+        public async Task SendMessage(int toUserId, string encryptedForRecipient, string encryptedForSender)
         {
             int fromUserId = GetCallerUserId();
             if (fromUserId == 0) return;
@@ -90,12 +90,13 @@ namespace WebApplication5.Hubs
                     return;
                 }
 
-                // Persist message
+                // Persist message with both encrypted copies
                 var message = new Message
                 {
                     SenderId = fromUserId,
                     ReceiverId = toUserId,
-                    EncryptedContent = encryptedPayload,
+                    EncryptedContent = encryptedForRecipient,
+                    SenderEncryptedContent = encryptedForSender,
                     SentAt = DateTime.UtcNow,
                     Delivered = false,
                     Read = false
@@ -103,26 +104,39 @@ namespace WebApplication5.Hubs
                 db.Messages.Add(message);
                 await db.SaveChangesAsync();
 
-                var dto = new MessageDto
+                // Send sender their own copy (encrypted for them)
+                var senderDto = new MessageDto
                 {
                     MessageId = message.MessageId,
                     SenderId = message.SenderId,
                     ReceiverId = message.ReceiverId,
-                    EncryptedContent = message.EncryptedContent,
+                    EncryptedContent = encryptedForSender,
+                    SentAt = message.SentAt,
+                    Delivered = false,
+                    Read = false
+                };
+
+                // Send recipient their copy (encrypted for them)
+                var recipientDto = new MessageDto
+                {
+                    MessageId = message.MessageId,
+                    SenderId = message.SenderId,
+                    ReceiverId = message.ReceiverId,
+                    EncryptedContent = encryptedForRecipient,
                     SentAt = message.SentAt,
                     Delivered = false,
                     Read = false
                 };
 
                 // Acknowledge to sender
-                Clients.Caller.messageSent(dto);
+                Clients.Caller.messageSent(senderDto);
 
                 // Deliver to recipient if online
                 string recipientConnId;
                 if (OnlineUsers.TryGetValue(toUserId, out recipientConnId))
                 {
-                    dto.Delivered = true;
-                    Clients.Client(recipientConnId).receiveMessage(dto);
+                    recipientDto.Delivered = true;
+                    Clients.Client(recipientConnId).receiveMessage(recipientDto);
 
                     message.Delivered = true;
                     await db.SaveChangesAsync();
