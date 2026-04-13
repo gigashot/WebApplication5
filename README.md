@@ -78,6 +78,10 @@ End-to-end encrypted messaging web application. Users register, add friends, and
 - **Services** — business logic (auth, friends, messaging, keys)
 - **Repositories** — data access wrapping Entity Framework 6
 - **No DI container** — services instantiate their own repositories and DbContext
+```
+  Controller
+      │
+   Service ──→ Repository ──→ DbContext ──→ SQL Server
 
 **Frontend layers:**
 - **Static HTML pages** — no server-side rendering (Razor)
