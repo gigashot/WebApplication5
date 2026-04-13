@@ -82,6 +82,7 @@ End-to-end encrypted messaging web application. Users register, add friends, and
   Controller
       │
    Service ──→ Repository ──→ DbContext ──→ SQL Server
+```
 
 **Frontend layers:**
 - **Static HTML pages** — no server-side rendering (Razor)
