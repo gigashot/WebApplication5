@@ -20,6 +20,7 @@ End-to-end encrypted messaging web application. Users register, add friends, and
 - [Encryption Flow](#encryption-flow)
 - [Frontend Modules](#frontend-modules)
 - [Dependencies](#dependencies)
+- [Testing](#testing)
 - [Known Issues](#known-issues)
 
 ---
@@ -470,6 +471,28 @@ The app uses CSS custom properties for theming defined in `Styles/main.css`:
 | Newtonsoft.Json | 13.0.3 | JSON serialization |
 | Owin | 1.0 | OWIN specification |
 | System.Runtime.CompilerServices.Unsafe | 4.5.3 | Runtime utilities (BCrypt dependency) |
+
+---
+
+## Testing
+
+The `Source/` folder contains SQL scripts for testing and verifying the database:
+
+| File | Description |
+|------|-------------|
+| `seed-data.sql` | Inserts test data: 5 users, 3 friendships, 5 friend requests, 7 messages. All passwords: `Test1234!` |
+| `verify-schema.sql` | Displays database structure: tables, columns, primary keys, foreign keys, indexes |
+| `cleanup.sql` | Deletes all data and resets identity counters |
+| `README.txt` | Instructions for the testing commission |
+
+### How to use
+
+1. Open SQL Server Management Studio (SSMS)
+2. Connect to server `MARA`, database `encryptapp`
+3. Run `seed-data.sql` to populate test data
+4. Run `verify-schema.sql` to inspect the schema
+
+> **Note:** Test users from `seed-data.sql` cannot be used for actual encrypted chat because registration through the web interface generates RSA key pairs in the browser and stores the private key in IndexedDB. To test full E2E encryption, register users through the web UI.
 
 ---
 
