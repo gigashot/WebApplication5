@@ -8,6 +8,7 @@ End-to-end encrypted messaging web application. Users register, add friends, and
 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
+- [3rd Party libraries](#3rd-Party-libraries)
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
 - [Prerequisites](#prerequisites)
