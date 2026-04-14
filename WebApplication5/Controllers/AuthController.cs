@@ -4,6 +4,17 @@ using System.Web.Http;
 using WebApplication5.Models.DTOs;
 using WebApplication5.Services;
 
+
+
+/*Všechny controllery kromì AuthController mají [SessionAuth] filtr
+? nepøihlášený uživatel dostane 401 døív, než se spustí jakýkoli kód.
+
+Každý controller:
+  -v konstruktoru vytvoøí instanci pøíslušného Service
+  - pøeète session: (int)Session["UserId"] ? currentUserId
+  - zavolá service metodu
+  - zabalí výsledek do ApiResponse a vrátí
+*/
 namespace WebApplication5.Controllers
 {
     [RoutePrefix("api/auth")]

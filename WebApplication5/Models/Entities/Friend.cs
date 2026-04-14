@@ -11,16 +11,16 @@ namespace WebApplication5.Models.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int FriendId { get; set; }
 
+        [ForeignKey("User1")]
         public int UserId1 { get; set; }
 
+        [ForeignKey("User2")]
         public int UserId2 { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
-        [ForeignKey("UserId1")]
         public virtual User User1 { get; set; }
 
-        [ForeignKey("UserId2")]
         public virtual User User2 { get; set; }
     }
 }

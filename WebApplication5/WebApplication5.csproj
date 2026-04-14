@@ -168,6 +168,10 @@
     <Content Include="Views\search.html" />
     <Content Include="Web.config" />
     <Content Include="packages.config" />
+    <Content Include="Source\README.txt" />
+    <Content Include="Source\seed-data.sql" />
+    <Content Include="Source\verify-schema.sql" />
+    <Content Include="Source\cleanup.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Web.Debug.config" />

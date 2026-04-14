@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using WebApplication5.Models;
 using WebApplication5.Models.DTOs;
@@ -22,6 +23,12 @@ namespace WebApplication5.Services
 
         public async Task<ApiResponse> Register(RegisterDto dto)
         {
+            var passwordError = ValidatePassword(dto.Password);
+            if (passwordError != null)
+            {
+                return ApiResponse.Error(passwordError);
+            }
+
             if (await _userRepository.UsernameExists(dto.Username))
             {
                 return ApiResponse.Error("Username already exists.");
@@ -63,6 +70,21 @@ namespace WebApplication5.Services
             };
 
             return ApiResponse<LoginResponseDto>.Ok(response, "Login successful.");
+        }
+
+        private string ValidatePassword(string password)
+        {
+            if (string.IsNullOrEmpty(password) || password.Length < 8)
+                return "Password must be at least 8 characters.";
+            if (!password.Any(char.IsUpper))
+                return "Password must contain at least one uppercase letter.";
+            if (!password.Any(char.IsLower))
+                return "Password must contain at least one lowercase letter.";
+            if (!password.Any(char.IsDigit))
+                return "Password must contain at least one digit.";
+            if (!password.Any(c => !char.IsLetterOrDigit(c)))
+                return "Password must contain at least one special character.";
+            return null;
         }
     }
 }

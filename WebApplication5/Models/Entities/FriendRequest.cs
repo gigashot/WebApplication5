@@ -11,8 +11,10 @@ namespace WebApplication5.Models.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RequestId { get; set; }
 
+        [ForeignKey("Sender")]
         public int SenderId { get; set; }
 
+        [ForeignKey("Receiver")]
         public int ReceiverId { get; set; }
 
         [Required]
@@ -21,10 +23,8 @@ namespace WebApplication5.Models.Entities
 
         public DateTime CreatedAt { get; set; }
 
-        [ForeignKey("SenderId")]
         public virtual User Sender { get; set; }
 
-        [ForeignKey("ReceiverId")]
         public virtual User Receiver { get; set; }
     }
 }

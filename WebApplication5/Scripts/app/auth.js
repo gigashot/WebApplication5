@@ -1,6 +1,15 @@
 // EncryptApp - Authentication Module
 var Auth = (function () {
 
+    function validatePassword(pw) {
+        if (pw.length < 8) return 'Password must be at least 8 characters.';
+        if (!/[A-Z]/.test(pw)) return 'Password must contain at least one uppercase letter.';
+        if (!/[a-z]/.test(pw)) return 'Password must contain at least one lowercase letter.';
+        if (!/[0-9]/.test(pw)) return 'Password must contain at least one digit.';
+        if (!/[^A-Za-z0-9]/.test(pw)) return 'Password must contain at least one special character.';
+        return null;
+    }
+
     function showAlert(elementId, message, type) {
         var el = document.getElementById(elementId);
         el.className = 'alert alert-' + (type || 'error');
@@ -27,8 +36,9 @@ var Auth = (function () {
                 return;
             }
 
-            if (password.length < 6) {
-                showAlert('alert', 'Password must be at least 6 characters.');
+            var pwError = validatePassword(password);
+            if (pwError) {
+                showAlert('alert', pwError);
                 return;
             }
 

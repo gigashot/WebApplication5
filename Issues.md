@@ -8,6 +8,8 @@
 - **Cause**: BCrypt.Net-Next 4.0.3 depends on `System.Runtime.CompilerServices.Unsafe` which wasn't included as a NuGet package
 - **Fix**: Install `System.Runtime.CompilerServices.Unsafe` NuGet package and add binding redirect in Web.config
 
+### DB security issues+
+
 ### 2. NullReferenceException on login (AuthController.cs line 40)
 
 - **Symptom**: `System.NullReferenceException: Object reference not set to an instance of an object` at `session["UserId"] = result.Data.UserId`
@@ -29,7 +31,8 @@
 
 ### 5. Messages cannot be seen by sender after site refresh
 
-- **Symptoms**: when sending a message - encrypt using own public key - as well as recipient public key
+- **Symptoms**:
+- **Cause**: messages enryted only by recipient key -**solution** when sending a message - encrypt using own public key - as well as recipient public key
 
 ### 6. Private key not found in IndexedDB
 
