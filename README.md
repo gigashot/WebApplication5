@@ -55,7 +55,8 @@ End-to-end encrypted messaging web application. Users register, add friends, and
 ---
 
 ## 3rd Party libraries
-
+| Technology | Version | Use case |
+|-------|-----------|
 | BCrypt.Net-Next | 4.0.3	| Password hashing - bcrypt (registration, login)| 
 | Entity Framework | 6.5.1	| ORM — manipulation of C# classes to SQL tables, generates queries, manages migrations| 
 | Newtonsoft.Json	| 13.0.3 | JSON serialization/deserialization (API requests and responses)| 
